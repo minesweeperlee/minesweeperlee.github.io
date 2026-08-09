@@ -522,10 +522,12 @@ body{
   position:fixed;inset:0;
   background:rgba(0,0,0,0.50);
   display:none;
-  align-items:center;
   justify-content:center;
   z-index:100;
   padding:var(--space-6);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
 }
 .modal-overlay.show{display:flex}
 .modal{
@@ -538,6 +540,7 @@ body{
   text-align:center;
   animation:modalIn 250ms ease;
   border:3px solid var(--border);
+  margin:auto;
 }
 @keyframes modalIn{
   from{opacity:0;transform:scale(0.92) translateY(10px)}
@@ -802,6 +805,16 @@ button:focus-visible{
   .face-btn{font-size:var(--text-sm)}
   .mode-btn{min-height:40px;font-size:var(--text-sm)}
   .board-wrapper{padding:2px 0 4px}
+  .modal{padding:var(--space-4) var(--space-6)}
+  .modal-header{margin-bottom:var(--space-2)}
+  .modal p{margin-bottom:var(--space-3);font-size:var(--text-base)}
+  .diff-grid{margin-bottom:var(--space-3)}
+  .diff-btn{padding:var(--space-2) var(--space-3);min-height:44px}
+  .btn{padding:var(--space-2) var(--space-4)}
+  .modal-actions{margin-top:var(--space-3)}
+  .btn-portal{margin-top:var(--space-2)}
+  .records-list{margin:var(--space-2) 0 var(--space-3)}
+  .record-row{padding:var(--space-2) var(--space-4)}
 }
 @media(max-width:380px){
   .status-bar{gap:var(--space-1)}
