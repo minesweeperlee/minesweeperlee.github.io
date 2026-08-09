@@ -804,7 +804,7 @@ button:focus-visible{
 
   <!-- Status bar — Mines left / Face / Timer -->
   <div class="status-bar">
-    <span class="status-item mine-counter" id="mineCounter" aria-label="남은 지뢰 수">💣 <span id="mineCount">010</span></span>
+    <span class="status-item mine-counter" id="mineCounter" aria-label="남은 지뢰 수">💣 <span id="mineCount">10</span></span>
     <button class="status-item face-btn" id="faceBtn" aria-label="다시하기" type="button">다시하기</button>
     <span class="status-item timer-display" aria-label="경과 시간">⏱ <span id="timerDisplay">00:00</span></span>
   </div>
@@ -1343,7 +1343,7 @@ function updateAria(r, c, el, cell) {
 }
 
 function updateMineCounter() {
-  mineCountEl.textContent = String(mines - flaggedCount).padStart(3, '0');
+  mineCountEl.textContent = String(mines - flaggedCount);
 }
 
 function updateTimer() {
