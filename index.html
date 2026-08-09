@@ -276,19 +276,31 @@ body{
 }
 .face-btn{
   background:var(--surface);
-  color:var(--text);
+  color:var(--primary);
+  border-color:var(--primary);
   font-family:var(--font-family);
   cursor:pointer;
   transition:all var(--transition-base);
   -webkit-tap-highlight-color:transparent;
-  font-size:clamp(24px,7vw,30px);
-  line-height:1;
+  font-size:var(--text-base);
+  font-weight:var(--weight-extrabold);
+  line-height:1.2;
   padding:var(--space-2) var(--space-4);
 }
-.face-btn:active{
+.face-btn:active,
+.face-btn.face-pressed{
   background:var(--primary-light);
-  border-color:var(--primary);
   transform:scale(0.95);
+}
+.face-btn.face-win{
+  background:var(--success-bg);
+  border-color:var(--success);
+  color:var(--success);
+}
+.face-btn.face-lose{
+  background:var(--error-bg);
+  border-color:var(--error);
+  color:var(--error);
 }
 
 /* ═══════════════════════════════════════
@@ -342,13 +354,16 @@ body{
   width:100%;
   display:flex;
   justify-content:center;
-  align-items:center;
   flex:1 1 auto;
   min-height:0;
   padding:var(--space-1) 0 var(--space-2);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
 }
 .board{
   position:relative;
+  margin:auto;
   display:grid;
   grid-template-columns:repeat(var(--cols,9),var(--cell-size,40px));
   grid-template-rows:repeat(var(--rows,9),var(--cell-size,40px));
@@ -720,7 +735,7 @@ button:focus-visible{
   .header{padding:var(--space-2) 0 var(--space-1)}
   .status-bar{padding:var(--space-1) 0 var(--space-2)}
   .status-item{padding:var(--space-2) var(--space-2);min-height:36px}
-  .face-btn{font-size:24px;padding:var(--space-2) var(--space-3)}
+  .face-btn{font-size:var(--text-sm);padding:var(--space-2) var(--space-3)}
   .mode-toggle{padding:var(--space-1) 0 var(--space-2)}
   .mode-btn{min-height:44px;font-size:var(--text-base)}
   .board-wrapper{padding:2px 0 4px}
@@ -728,18 +743,19 @@ button:focus-visible{
 }
 @media(max-height:640px){
   .status-item{min-height:34px}
-  .face-btn{font-size:22px}
+  .face-btn{font-size:var(--text-sm)}
   .mode-btn{min-height:40px;font-size:var(--text-sm)}
   .board-wrapper{padding:2px 0 4px}
 }
 @media(max-width:380px){
   .status-bar{gap:var(--space-1)}
   .status-item{padding:var(--space-2) var(--space-2);font-size:var(--text-xs)}
-  .face-btn{font-size:22px}
+  .face-btn{font-size:var(--text-sm)}
 }
 @media(max-width:360px){
   .status-bar{gap:var(--space-1)}
   .status-item{padding:var(--space-2) var(--space-2);font-size:var(--text-xs)}
+  .face-btn{font-size:var(--text-sm)}
 }
 @media(min-width:500px){
   .header-btn{padding:var(--space-2) var(--space-4)}
@@ -762,7 +778,7 @@ button:focus-visible{
   <!-- Status bar — Mines left / Face / Timer -->
   <div class="status-bar">
     <span class="status-item mine-counter" id="mineCounter" aria-label="남은 지뢰 수">💣 <span id="mineCount">010</span></span>
-    <button class="status-item face-btn" id="faceBtn" aria-label="새 게임 시작" type="button">🙂</button>
+    <button class="status-item face-btn" id="faceBtn" aria-label="다시하기" type="button">다시하기</button>
     <span class="status-item timer-display" aria-label="경과 시간">⏱ <span id="timerDisplay">00:00</span></span>
   </div>
 
@@ -794,7 +810,7 @@ button:focus-visible{
     <div class="diff-grid" role="group" aria-label="난이도 선택">
       <button class="diff-btn" data-diff="easy" aria-label="쉬움 난이도"><span class="diff-name">쉬움</span><span class="diff-desc" id="descEasy">9×9 · 지뢰 10개</span></button>
       <button class="diff-btn" data-diff="medium" aria-label="보통 난이도"><span class="diff-name">보통</span><span class="diff-desc" id="descMedium">16×16 · 지뢰 40개</span></button>
-      <button class="diff-btn" data-diff="hard" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc" id="descHard">16×30 · 지뢰 99개</span></button>
+      <button class="diff-btn" data-diff="hard" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc" id="descHard">30×16 · 지뢰 99개</span></button>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="btnCancelReset">취소</button>
@@ -868,7 +884,7 @@ button:focus-visible{
       </div>
       <div class="rule-section">
         <h3>📊 난이도</h3>
-        <p>쉬움 9×9 · 지뢰 10개<br>보통 16×16 · 지뢰 40개<br>어려움 16×30 · 지뢰 99개</p>
+        <p>쉬움 9×9 · 지뢰 10개<br>보통 16×16 · 지뢰 40개<br>어려움 30×16 · 지뢰 99개</p>
       </div>
       <div class="rule-section">
         <h3>⏱ 최고 기록</h3>
@@ -898,7 +914,7 @@ const SWIPE_SLOP = 12;
 const DIFFICULTIES = {
   easy:   { label: '쉬움',   rows: 9,  cols: 9,  mines: 10 },
   medium: { label: '보통',   rows: 16, cols: 16, mines: 40 },
-  hard:   { label: '어려움', rows: 16, cols: 30, mines: 99 }
+  hard:   { label: '어려움', rows: 30, cols: 16, mines: 99 }
 };
 
 const BEST_KEYS = {
@@ -910,7 +926,7 @@ const BEST_KEYS = {
 const DIFF_DESC_BASE = {
   easy:   '9×9 · 지뢰 10개',
   medium: '16×16 · 지뢰 40개',
-  hard:   '16×30 · 지뢰 99개'
+  hard:   '30×16 · 지뢰 99개'
 };
 
 let difficulty = DEFAULT_DIFFICULTY;
@@ -1302,8 +1318,8 @@ function updateTimer() {
 }
 
 function setFace(kind) {
-  const faces = { normal: '🙂', pressed: '😮', win: '😎', lose: '😵' };
-  faceBtn.textContent = faces[kind] || '🙂';
+  faceBtn.classList.remove('face-normal', 'face-pressed', 'face-win', 'face-lose');
+  faceBtn.classList.add('face-' + (kind || 'normal'));
 }
 
 function setMode(m) {
@@ -1512,7 +1528,7 @@ function bindEvents() {
     toggleFlag(parseInt(btn.dataset.r, 10), parseInt(btn.dataset.c, 10));
   });
 
-  // Face changes to 😮 while mouse pressed on a covered cell
+  // Pressed state while mouse is down on a covered cell
   boardEl.addEventListener('mousedown', function(e) {
     if (e.button !== 0) return;
     const btn = e.target.closest('.cell');
