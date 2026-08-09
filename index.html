@@ -782,15 +782,15 @@ button:focus-visible{
     <span class="status-item timer-display" aria-label="경과 시간">⏱ <span id="timerDisplay">00:00</span></span>
   </div>
 
+  <!-- Board — The star of the show -->
+  <div class="board-wrapper" id="boardWrapper">
+    <div class="board" id="board" tabindex="0" aria-label="지뢰찾기 보드. 방향키로 이동, 엔터로 열기, F 키로 깃발"></div>
+  </div>
+
   <!-- Mode toggle — Open / Flag -->
   <div class="mode-toggle" role="group" aria-label="칸 조작 모드">
     <button class="mode-btn active-open" id="btnOpenMode" type="button" aria-pressed="true" aria-label="열기 모드">👆 열기</button>
     <button class="mode-btn" id="btnFlagMode" type="button" aria-pressed="false" aria-label="깃발 모드">🚩 깃발</button>
-  </div>
-
-  <!-- Board — The star of the show -->
-  <div class="board-wrapper" id="boardWrapper">
-    <div class="board" id="board" tabindex="0" aria-label="지뢰찾기 보드. 방향키로 이동, 엔터로 열기, F 키로 깃발"></div>
   </div>
 
   <!-- Controls — Bottom hint -->
