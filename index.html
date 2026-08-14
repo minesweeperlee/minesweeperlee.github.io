@@ -1654,18 +1654,49 @@ function bindEvents() {
     const btn = e.target.closest('.cell');
     if (!btn) return;
     e.preventDefault();
+    // A touch long-press already placed the flag (timer fired ~350ms);
+    // some mobile browsers synthesize a native contextmenu afterwards — skip the second toggle.
+    if (suppressClick) return;
     toggleFlag(parseInt(btn.dataset.r, 10), parseInt(btn.dataset.c, 10));
   });
 
-  // Pressed state while mouse is down on a covered cell
+  // Long-press flag (mouse) — same as touch; a short press stays a normal click
   boardEl.addEventListener('mousedown', function(e) {
     if (e.button !== 0) return;
     const btn = e.target.closest('.cell');
     if (!btn) return;
-    const cell = grid[parseInt(btn.dataset.r, 10)][parseInt(btn.dataset.c, 10)];
+    const r = parseInt(btn.dataset.r, 10);
+    const c = parseInt(btn.dataset.c, 10);
+    const cell = grid[r][c];
     if (!cell.revealed && !cell.flagged && mode === 'open' && !gameOver) setFace('pressed');
+    if (mode !== 'open' || cell.revealed || cell.flagged || gameOver) return;
+    pressStart = { x: e.clientX, y: e.clientY };
+    pressTimer = setTimeout(function() {
+      pressTimer = null;
+      pressStart = null;
+      suppressClick = true;
+      setFace('normal');
+      toggleFlag(r, c);
+    }, LONG_PRESS_MS);
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (pressTimer && pressStart) {
+      const dx = e.clientX - pressStart.x;
+      const dy = e.clientY - pressStart.y;
+      if (Math.abs(dx) > SWIPE_SLOP || Math.abs(dy) > SWIPE_SLOP) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+        pressStart = null;
+        if (!gameOver) setFace('normal');
+      }
+    }
   });
   document.addEventListener('mouseup', function() {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+    pressStart = null;
     if (!gameOver) setFace('normal');
   });
 
