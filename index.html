@@ -1492,6 +1492,8 @@ function renderDifficultyUI() {
 
 function showWinModal(isNewRecord) {
   const label = DIFFICULTIES[difficulty].label;
+  // 공유 화면에서 숨긴 최고 기록 stat을 평소 결과 화면에서는 다시 표시
+  winBest.parentElement.style.display = '';
   winMessage.textContent = label + ' 난이도를 클리어했어요!';
   winTime.textContent = formatTime(timerSeconds);
   const best = getBestTime();
@@ -1508,6 +1510,8 @@ function showWinModal(isNewRecord) {
 
 function showGameOverModal() {
   const label = DIFFICULTIES[difficulty].label;
+  // 공유 화면에서 숨긴 최고 기록 stat을 평소 결과 화면에서는 다시 표시
+  goBest.parentElement.style.display = '';
   goMessage.textContent = '(' + label + ') 다음에는 깃발을 잘 활용해 보세요';
   goTime.textContent = formatTime(timerSeconds);
   const best = getBestTime();
@@ -1885,8 +1889,8 @@ function showSharedResult(data) {
   if (data.w === 1) {
     winMessage.textContent = label + ' 난이도를 클리어했어요!';
     winTime.textContent = formatTime(data.t);
-    const best = getBestTimeFor(data.d);
-    winBest.textContent = best !== null ? formatTime(best) : '--';
+    // 공유 화면: 통산 최고 기록은 표시하지 않는다 (해당 플레이 결과만 표시)
+    winBest.parentElement.style.display = 'none';
     winNewRecord.style.display = 'none';
     currentShareData = { v: 1, g: 'minesweeper', d: data.d, t: data.t, w: 1 };
     // 공유받은 화면: 공유/새 게임은 불필요 → "시작하기"로 대체
@@ -1897,8 +1901,8 @@ function showSharedResult(data) {
   } else {
     goMessage.textContent = '(' + label + ') 공유받은 게임 결과예요.';
     goTime.textContent = formatTime(data.t);
-    const best = getBestTimeFor(data.d);
-    goBest.textContent = best !== null ? formatTime(best) : '--';
+    // 공유 화면: 통산 최고 기록은 표시하지 않는다 (해당 플레이 결과만 표시)
+    goBest.parentElement.style.display = 'none';
     currentShareData = { v: 1, g: 'minesweeper', d: data.d, t: data.t, w: 0 };
     // 공유받은 화면: 공유/새 게임은 불필요 → "시작하기"로 대체
     btnGoShare.hidden = true;
